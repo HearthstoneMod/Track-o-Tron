@@ -171,10 +171,14 @@ namespace Bug_o_Tron
         {
             BugsChannel.SendMessage("**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
+            string adminList = "```";
+
             for (int i = 0; i < Admins.Count; i++)
             {
-                BugsChannel.SendMessage("** ·  **" + Admins[i]);
+                adminList += "· " + Admins[i] + "\n";
             }
+
+            BugsChannel.SendMessage(adminList + " ```");
         }
 
         private void AddAdminCommand(string admin)
@@ -242,10 +246,14 @@ namespace Bug_o_Tron
         {
             BugsChannel.SendMessage("**Showing current bug list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
+            string bugList = "```";
+
             for (int i = 0; i < Bugs.Count; i++)
             {
-                BugsChannel.SendMessage("** ·  (" + i + ") **" + Bugs[i]);
+                bugList += ("(" + i + ") -> " + Bugs[i] + " \n");
             }
+
+            BugsChannel.SendMessage(bugList + " ```");
         }
 
         private void AddBugCommand(string bug, string user)
