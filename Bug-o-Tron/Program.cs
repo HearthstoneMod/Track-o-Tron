@@ -178,7 +178,7 @@ namespace Bug_o_Tron
                 adminList += "· " + Admins[i] + "\n";
             }
 
-            BugsChannel.SendMessage(adminList + " ```");
+            BugsChannel.SendMessage(adminList.Remove(adminList.Length - 3) + " ```");
         }
 
         private void AddAdminCommand(string admin)
@@ -253,7 +253,7 @@ namespace Bug_o_Tron
                 bugList += ("(" + i + ") -> " + Bugs[i] + " \n");
             }
 
-            BugsChannel.SendMessage(bugList + " ```");
+            BugsChannel.SendMessage(bugList.Remove(bugList.Length - 3) + " ```");
         }
 
         private void AddBugCommand(string bug, string user)
