@@ -49,7 +49,7 @@ namespace Bug_o_Tron
 
             discordClient.ExecuteAndWait(async () =>
             {
-                await discordClient.Connect("MjA4MTI0MDk5MzI5OTE2OTI4.CntGnA.sg8szjS2A0dc6FFSDnJBloB4QLE");
+                await discordClient.Connect("MjA4MTkyMjA0NTM4MjQ5MjE3.CnuFmQ.JChooQG0LBg9d4ZTrTEE85bdZjM");
 
                 await Task.Delay(1000);
 
