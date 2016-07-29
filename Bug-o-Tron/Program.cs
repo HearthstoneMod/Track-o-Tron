@@ -421,7 +421,7 @@ namespace Bug_o_Tron
         {
             AddIdea(idea, user);
 
-            channel.SendMessage("**Idea added to the list. ** Use *!buglist* to check the current bug list.");
+            channel.SendMessage("**Idea added to the list. ** Use *!idealist* to check the current idea list.");
         }
 
         private void RemoveIdeaCommand(Channel channel, int id)
