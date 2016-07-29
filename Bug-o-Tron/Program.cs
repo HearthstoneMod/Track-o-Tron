@@ -145,14 +145,17 @@ namespace Bug_o_Tron
                         switch (commands[0].ToLower())
                         {
                             case "!hello":
-                                channel.SendMessage("** *HELLO! HELLO! HELLO!* **");
+                                if (isAdmin)
+                                {
+                                    channel.SendTTSMessage("***HELLO! HELLO! HELLO!***");
+                                }
                                 break;
 
                             case "!help":
                                 channel.SendMessage("**List of commands available :** \n");
 
                                 channel.SendMessage("**· Normal Commands :**\n " +
-                                                    "```!hello - Shows a hello message\n" +
+                                                    "```!hello - HELLO! (admin only)\n" +
                                                     "!help - Shows this message```\n" +
 
                                                     "**· Admin Commands: **\n" +
