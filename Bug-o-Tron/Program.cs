@@ -149,9 +149,29 @@ namespace Bug_o_Tron
                                 break;
 
                             case "!help":
+                                channel.SendMessage("**List of commands available :** \n");
 
+                                channel.SendMessage("**· Normal Commands :**\n " +
+                                                    "```!hello - Shows a hello message\n" +
+                                                    "!help - Shows this message```\n" +
+
+                                                    "**· Admin Commands: **\n" +
+                                                    "```!addadmin <fullname> - Adds an admin to the admin list (admin only)\n" +
+                                                    "!removeadmin <fullname> -Removes an admin from the admin list (admin only)\n" +
+                                                    "!adminlist - Show the full list of admins```\n" +
+
+                                                    "**· Bug Commands: **\n" +
+                                                    "```!bug <text> - Adds a bug to the bug list\n" +
+                                                    "!removebug <id> -Remvoes a bug from the bug list (admin only)\n" +
+                                                    "!buglist - Show the full list of bugs\n" +
+                                                    "!clearbuglist - Clear the list of bugs (admin only)```\n" +
+
+                                                    "**· Idea Commands: **\n" +
+                                                    "```!idea <text> -Adds an idea to the idea list\n" +
+                                                    "!removeidea <id> -Remvoes an idea from the idea list (admin only)\n" +
+                                                    "!idealist - Show the full list of ideas\n" +
+                                                    "!clearidealist - Clear the list of ideas (admin only)```\n");
                                 break;
-
                             case "!addadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
