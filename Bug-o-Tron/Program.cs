@@ -458,7 +458,7 @@ namespace Bug_o_Tron
                 ideaString = ideaString.Substring(1);
             }
 
-            File.WriteAllText(AppDirectory + "idea.list", ideaString);
+            File.WriteAllText(AppDirectory + "ideas.list", ideaString);
         }
 
         #endregion
