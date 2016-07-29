@@ -446,7 +446,7 @@ namespace Bug_o_Tron
         private void RemoveIdea(int id)
         {
             Ideas.RemoveAt(id);
-            SaveBugFile();
+            SaveIdeaFile();
         }
 
         private void SaveIdeaFile()
