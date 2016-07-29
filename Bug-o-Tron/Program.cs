@@ -33,6 +33,7 @@ namespace Bug_o_Tron
 
         private List<string> Admins = new List<string>(); 
         private List<string> Bugs = new List<string>(); 
+        private List<string> Ideas = new List<string>(); 
 
         public void Start()
         {
@@ -57,6 +58,7 @@ namespace Bug_o_Tron
                 BugsChannel = Server.AllChannels.First(c => c.Name == "bugs");
 
                 Console.WriteLine(" ");
+                
                 Console.WriteLine("Loaded bot to server " + Server.Name + " in channel #" + BugsChannel);
             });
         }
@@ -102,13 +104,34 @@ namespace Bug_o_Tron
 
                 Console.WriteLine("Created empty bug list");
             }
+
+            Console.WriteLine(" ");
+
+            if (File.Exists(AppDirectory + "ideas.list"))
+            {
+                string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                Console.WriteLine("Loading ideas (" + ideas.Length + ") :");
+
+                foreach (string idea in ideas)
+                {
+                    Ideas.Add(idea);
+                    Console.WriteLine("· " + idea);
+                }
+            }
+            else
+            {
+                File.Create(AppDirectory + "ideas.list").Close();
+
+                Console.WriteLine("Created empty ideas list");
+            }
         }
 
         private void ProcessMessage(MessageEventArgs args)
         {
             if (args.Message.IsAuthor == false )
             {
-                if (args.Server.Id == ServerID && args.Channel.Name == ChannelID)
+                if (args.Server.Id == ServerID)
                 {
                     string fullText = args.Message.Text;
 
@@ -117,47 +140,84 @@ namespace Bug_o_Tron
                         string[] commands = fullText.Split();
                         string fullUser = args.User.ToString();
                         bool isAdmin = Admins.Contains(fullUser);
+                        Channel channel = args.Channel;
 
-                        switch (commands[0])
+                        switch (commands[0].ToLower())
                         {
+                            case "!hello":
+                                channel.SendMessage("** *HELLO! HELLO! HELLO!* **");
+                                break;
+
+                            case "!help":
+
+                                break;
+
                             case "!addadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
-                                    AddAdminCommand(commands[1]);
+                                    AddAdminCommand(channel, commands[1]);
                                 }
                                 break;
 
                             case "!removeadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
-                                    RemoveAdminCommand(commands[1]);
+                                    RemoveAdminCommand(channel, commands[1]);
                                 }
                                 break;
 
                             case "!adminlist":
-                                ShowAdminListCommand();
+                                ShowAdminListCommand(channel);
                                 break;
 
-                            case "!report":
+                            case "!bug":
                                 if (commands.Length > 1)
                                 {
-                                    AddBugCommand(fullText.Substring(commands[0].Length + 1), fullUser);
+                                    AddBugCommand(channel, fullText.Substring(commands[0].Length + 1), fullUser);
                                 }
                                 break;
 
-                            case "!fix":
+                            case "!removebug":
                                 if (commands.Length > 1 && isAdmin)
                                 {
-                                    RemoveBugCommand(int.Parse(commands[1]));
+                                    RemoveBugCommand(channel, int.Parse(commands[1]));
                                 }
-                                break;
-
-                            case "!clearbuglist":
-
                                 break;
 
                             case "!buglist":
-                                ShowBugListCommand();
+                                ShowBugListCommand(channel);
+                                break;
+
+                            case "!clearbuglist":
+                                if (isAdmin)
+                                {
+                                    ClearBugListCommand(channel);
+                                }
+                                break;
+                                
+                            case "!idea":
+                                if (commands.Length > 1)
+                                {
+                                    AddIdeaCommand(channel, fullText.Substring(commands[0].Length + 1), fullUser);
+                                }
+                                break;
+
+                            case "!removeidea":
+                                if (commands.Length > 1 && isAdmin)
+                                {
+                                    RemoveIdeaCommand(channel, int.Parse(commands[1]));
+                                }
+                                break;
+
+                            case "!idealist":
+                                ShowIdeaListCommand(channel);
+                                break;
+
+                            case "!clearidealist":
+                                if (isAdmin)
+                                {
+                                    ClearIdeaListCommand(channel);
+                                }
                                 break;
                         }
                     }
@@ -167,9 +227,9 @@ namespace Bug_o_Tron
 
         #region Admin Related Methods
 
-        private void ShowAdminListCommand()
+        private void ShowAdminListCommand(Channel channel)
         {
-            BugsChannel.SendMessage("**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**");
+            channel.SendMessage("**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
             string adminList = "```";
 
@@ -178,39 +238,39 @@ namespace Bug_o_Tron
                 adminList += "· " + Admins[i] + "\n";
             }
 
-            BugsChannel.SendMessage(adminList.Remove(adminList.Length - 3) + " ```");
+            channel.SendMessage(adminList.Remove(adminList.Length - 3) + " ```");
         }
 
-        private void AddAdminCommand(string admin)
+        private void AddAdminCommand(Channel channel, string admin)
         {
             if (Server.Users.Any(u => u.ToString() == admin))
             {
                 if (Admins.Contains(admin))
                 {
-                    BugsChannel.SendMessage("@" + admin + "** is already an admin.**");
+                    channel.SendMessage("@" + admin + "** is already an admin.**");
                 }
                 else
                 {
                     AddAdmin(admin);
-                    BugsChannel.SendMessage("@" + admin + "** was added to the admin list.**");
+                    channel.SendMessage("@" + admin + "** was added to the admin list.**");
                 }
             }
             else
             {
-                BugsChannel.SendMessage(admin + "** was not found in the server.**");
+                channel.SendMessage(admin + "** was not found in the server.**");
             }
         }
 
-        private void RemoveAdminCommand(string admin)
+        private void RemoveAdminCommand(Channel channel, string admin)
         {
             if (Admins.Contains(admin))
             {
                 RemoveAdmin(admin);
-                BugsChannel.SendMessage(admin + "** was removed from admins.**");
+                channel.SendMessage(admin + "** was removed from admins.**");
             }
             else
             {
-                BugsChannel.SendMessage(admin + "** is not an admin.**");
+                channel.SendMessage(admin + "** is not an admin.**");
             }
         }
 
@@ -242,9 +302,9 @@ namespace Bug_o_Tron
 
         #region Buglist Related Methods
 
-        private void ShowBugListCommand()
+        private void ShowBugListCommand(Channel channel)
         {
-            BugsChannel.SendMessage("**Showing current bug list **(" + DateTime.Today.ToShortDateString() + ")** :**");
+            channel.SendMessage("**Showing current bug list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
             string bugList = "```";
 
@@ -253,26 +313,34 @@ namespace Bug_o_Tron
                 bugList += ("(" + i + ") -> " + Bugs[i] + " \n");
             }
 
-            BugsChannel.SendMessage(bugList.Remove(bugList.Length - 3) + " ```");
+            channel.SendMessage(bugList.Remove(bugList.Length - 3) + " ```");
         }
 
-        private void AddBugCommand(string bug, string user)
+        private void ClearBugListCommand(Channel channel)
+        {
+            Bugs.Clear();
+            SaveBugFile();
+
+            channel.SendMessage("**Bug list has been cleared.**");
+        }
+
+        private void AddBugCommand(Channel channel, string bug, string user)
         {
             AddBug(bug, user);
 
-            BugsChannel.SendMessage("**Bug added to the list. ** Use *!buglist* to check the current bug list.");
+            channel.SendMessage("**Bug added to the list. ** Use *!buglist* to check the current bug list.");
         }
 
-        private void RemoveBugCommand(int id)
+        private void RemoveBugCommand(Channel channel, int id)
         {
             if (Bugs.Count > id)
             {
-                BugsChannel.SendMessage("**Bug with ID ** " + id + " ** removed from the list.** " + Bugs[id]);
+                channel.SendMessage("**Bug with ID ** " + id + " ** removed from the list.** " + Bugs[id]);
                 RemoveBug(id);
             }
             else
             {
-                BugsChannel.SendMessage("**Bug with ID ** " + id + " ** was not found.**");
+                channel.SendMessage("**Bug with ID ** " + id + " ** was not found.**");
             }
         }
 
@@ -298,6 +366,76 @@ namespace Bug_o_Tron
             }
 
             File.WriteAllText(AppDirectory + "bugs.list", bugString);
+        }
+
+        #endregion
+
+        #region Idealist Related Methods
+
+        private void ShowIdeaListCommand(Channel channel)
+        {
+            channel.SendMessage("**Showing current idea list **(" + DateTime.Today.ToShortDateString() + ")** :**");
+
+            string ideaList = "```";
+
+            for (int i = 0; i < Ideas.Count; i++)
+            {
+                ideaList += ("(" + i + ") -> " + Ideas[i] + " \n");
+            }
+
+            channel.SendMessage(ideaList.Remove(ideaList.Length - 3) + " ```");
+        }
+
+        private void ClearIdeaListCommand(Channel channel)
+        {
+            Ideas.Clear();
+            SaveIdeaFile();
+
+            channel.SendMessage("**Idea list has been cleared.**");
+        }
+
+        private void AddIdeaCommand(Channel channel, string idea, string user)
+        {
+            AddIdea(idea, user);
+
+            channel.SendMessage("**Idea added to the list. ** Use *!buglist* to check the current bug list.");
+        }
+
+        private void RemoveIdeaCommand(Channel channel, int id)
+        {
+            if (Ideas.Count > id)
+            {
+                channel.SendMessage("**Idea with ID ** " + id + " ** removed from the list.** " + Ideas[id]);
+                RemoveIdea(id);
+            }
+            else
+            {
+                channel.SendMessage("**Idea with ID ** " + id + " ** was not found.**");
+            }
+        }
+
+        private void AddIdea(string idea, string user)
+        {
+            Ideas.Add(idea + " | " + user + " | " + DateTime.Now);
+            SaveIdeaFile();
+        }
+
+        private void RemoveIdea(int id)
+        {
+            Ideas.RemoveAt(id);
+            SaveBugFile();
+        }
+
+        private void SaveIdeaFile()
+        {
+            string ideaString = string.Join(",", Ideas.ToArray());
+
+            if (ideaString.StartsWith(","))
+            {
+                ideaString = ideaString.Substring(1);
+            }
+
+            File.WriteAllText(AppDirectory + "idea.list", ideaString);
         }
 
         #endregion
