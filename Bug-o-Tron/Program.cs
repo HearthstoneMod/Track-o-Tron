@@ -318,9 +318,9 @@ namespace Bug_o_Tron
 
         private void SaveAdminFile()
         {
-            string adminString = string.Join(",", Admins.ToArray());
+            string adminString = string.Join(";", Admins.ToArray());
             
-            if (adminString.StartsWith(","))
+            if (adminString.StartsWith(";"))
             {
                 adminString = adminString.Substring(1);
             }
@@ -395,9 +395,9 @@ namespace Bug_o_Tron
 
         private void SaveBugFile()
         {
-            string bugString = string.Join(",", Bugs.ToArray());
+            string bugString = string.Join(";", Bugs.ToArray());
 
-            if (bugString.StartsWith(","))
+            if (bugString.StartsWith(";"))
             {
                 bugString = bugString.Substring(1);
             }
