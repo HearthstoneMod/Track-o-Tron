@@ -252,16 +252,23 @@ namespace Bug_o_Tron
 
         private void ShowAdminListCommand(Channel channel)
         {
-            channel.SendMessage("**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**");
-
-            string adminList = "```";
-
-            for (int i = 0; i < Admins.Count; i++)
+            if (Admins.Count > 0)
             {
-                adminList += "· " + Admins[i] + "\n";
-            }
+                channel.SendMessage("**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
-            channel.SendMessage(adminList.Remove(adminList.Length - 3) + " ```");
+                string adminList = "```";
+
+                for (int i = 0; i < Admins.Count; i++)
+                {
+                    adminList += "· " + Admins[i] + "\n";
+                }
+
+                channel.SendMessage(adminList.Remove(adminList.Length - 3) + " ```");
+            }
+            else
+            {
+                channel.SendMessage("**Admin list is empty.**");
+            }
         }
 
         private void AddAdminCommand(Channel channel, string admin)
@@ -327,16 +334,23 @@ namespace Bug_o_Tron
 
         private void ShowBugListCommand(Channel channel)
         {
-            channel.SendMessage("**Showing current bug list **(" + DateTime.Today.ToShortDateString() + ")** :**");
-
-            string bugList = "```";
-
-            for (int i = 0; i < Bugs.Count; i++)
+            if (Bugs.Count > 0)
             {
-                bugList += ("(" + i + ") -> " + Bugs[i] + " \n");
-            }
+                channel.SendMessage("**Showing current bug list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
-            channel.SendMessage(bugList.Remove(bugList.Length - 3) + " ```");
+                string bugList = "```";
+
+                for (int i = 0; i < Bugs.Count; i++)
+                {
+                    bugList += ("(" + i + ") -> " + Bugs[i] + " \n");
+                }
+
+                channel.SendMessage(bugList.Remove(bugList.Length - 3) + " ```");
+            }
+            else
+            {
+                channel.SendMessage("**Bug list is empty.**");
+            }
         }
 
         private void ClearBugListCommand(Channel channel)
@@ -397,16 +411,23 @@ namespace Bug_o_Tron
 
         private void ShowIdeaListCommand(Channel channel)
         {
-            channel.SendMessage("**Showing current idea list **(" + DateTime.Today.ToShortDateString() + ")** :**");
-
-            string ideaList = "```";
-
-            for (int i = 0; i < Ideas.Count; i++)
+            if (Ideas.Count > 0)
             {
-                ideaList += ("(" + i + ") -> " + Ideas[i] + " \n");
-            }
+                channel.SendMessage("**Showing current idea list **(" + DateTime.Today.ToShortDateString() + ")** :**");
 
-            channel.SendMessage(ideaList.Remove(ideaList.Length - 3) + " ```");
+                string ideaList = "```";
+
+                for (int i = 0; i < Ideas.Count; i++)
+                {
+                    ideaList += ("(" + i + ") -> " + Ideas[i] + " \n");
+                }
+
+                channel.SendMessage(ideaList.Remove(ideaList.Length - 3) + " ```");
+            }
+            else
+            {
+                channel.SendMessage("**Idea list is empty.**");
+            }
         }
 
         private void ClearIdeaListCommand(Channel channel)
