@@ -67,7 +67,7 @@ namespace Bug_o_Tron
         {
             if (File.Exists(AppDirectory + "admins.list"))
             {
-                string[] admins = File.ReadAllText(AppDirectory + "admins.list").Split(new string[1] {","}, StringSplitOptions.RemoveEmptyEntries);
+                string[] admins = File.ReadAllText(AppDirectory + "admins.list").Split(new string[1] {";"}, StringSplitOptions.RemoveEmptyEntries);
 
                 Console.WriteLine("Loading admins (" + admins.Length + ") :");
 
@@ -88,7 +88,7 @@ namespace Bug_o_Tron
 
             if (File.Exists(AppDirectory + "bugs.list"))
             {
-                string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
                 Console.WriteLine("Loading bugs (" + bugs.Length + ") :");
 
@@ -109,7 +109,7 @@ namespace Bug_o_Tron
 
             if (File.Exists(AppDirectory + "ideas.list"))
             {
-                string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
                 Console.WriteLine("Loading ideas (" + ideas.Length + ") :");
 
@@ -451,9 +451,9 @@ namespace Bug_o_Tron
 
         private void SaveIdeaFile()
         {
-            string ideaString = string.Join(",", Ideas.ToArray());
+            string ideaString = string.Join(";", Ideas.ToArray());
 
-            if (ideaString.StartsWith(","))
+            if (ideaString.StartsWith(";"))
             {
                 ideaString = ideaString.Substring(1);
             }
