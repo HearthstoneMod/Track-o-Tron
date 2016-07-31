@@ -21,19 +21,16 @@ namespace Bug_o_Tron
 
         #endregion
 
-        private DiscordClient discordClient;
-
         private const ulong ServerID = 194099156988461056;
-        private const string ChannelID = "bugs";
 
+        private DiscordClient Client;
         private Server Server;
-        private Channel BugsChannel;
 
         private string AppDirectory;
 
         private List<string> Admins = new List<string>(); 
         private List<string> Bugs = new List<string>(); 
-        private List<string> Ideas = new List<string>(); 
+        private List<string> Ideas = new List<string>();
 
         public void Start()
         {
@@ -41,25 +38,22 @@ namespace Bug_o_Tron
 
             LoadFiles();
 
-            discordClient = new DiscordClient();
+            Client = new DiscordClient();
 
-            discordClient.MessageReceived += async (obj, args) =>
+            Client.MessageReceived += async (obj, args) =>
             {
                 await Task.Run(() => ProcessMessage(args));
             };
 
-            discordClient.ExecuteAndWait(async () =>
+            Client.ExecuteAndWait(async () =>
             {
-                await discordClient.Connect("MjA4MTkyMjA0NTM4MjQ5MjE3.CnuFmQ.JChooQG0LBg9d4ZTrTEE85bdZjM");
+                await Client.Connect("MjA4MTkyMjA0NTM4MjQ5MjE3.CnuFmQ.JChooQG0LBg9d4ZTrTEE85bdZjM");
 
                 await Task.Delay(1000);
 
-                Server = discordClient.Servers.First(s => s.Id == ServerID);
-                BugsChannel = Server.AllChannels.First(c => c.Name == "bugs");
-
-                Console.WriteLine(" ");
+                Server = Client.Servers.First(s => s.Id == ServerID);
                 
-                Console.WriteLine("Loaded bot to server " + Server.Name + " in channel #" + BugsChannel);
+                Console.WriteLine("Loaded Bug-o-Tron bot to server " + Server.Name);
             });
         }
 
@@ -125,13 +119,15 @@ namespace Bug_o_Tron
 
                 Console.WriteLine("Created empty ideas list");
             }
+
+            Console.WriteLine(" ");
         }
 
         private void ProcessMessage(MessageEventArgs args)
         {
-            if (args.Message.IsAuthor == false )
+            if (args.Message.IsAuthor == false)
             {
-                if (args.Server.Id == ServerID)
+                if (args.Server?.Id == ServerID)
                 {
                     string fullText = args.Message.Text;
 
