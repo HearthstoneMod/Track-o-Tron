@@ -152,7 +152,8 @@ namespace Bug_o_Tron
 
                                 channel.SendMessage("**· Normal Commands :**\n " +
                                                     "```!hello - HELLO! (admin only)\n" +
-                                                    "!help - Shows this message```\n" +
+                                                    "!help - Shows this message\n" +
+                                                    "!clean <quantity> - Cleans x messages from chat (admin only)```\n" +
 
                                                     "**· Admin Commands: **\n" +
                                                     "```!addadmin <fullname> - Adds an admin to the admin list (admin only)\n" +
@@ -171,6 +172,14 @@ namespace Bug_o_Tron
                                                     "!idealist - Show the full list of ideas\n" +
                                                     "!clearidealist - Clear the list of ideas (admin only)```\n");
                                 break;
+
+                            case "!clean":
+                                if (commands.Length > 1 && isAdmin)
+                                {
+                                    CleanCommand(channel, int.Parse(commands[1]));
+                                }
+                                break;
+
                             case "!addadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
@@ -476,6 +485,17 @@ namespace Bug_o_Tron
             }
 
             File.WriteAllText(AppDirectory + "ideas.list", ideaString);
+        }
+
+        #endregion
+
+        #region Utility Related Methods
+
+        public async void CleanCommand(Channel channel, int quantity)
+        {
+            Message[] removeMessages = await channel.DownloadMessages(quantity + 1);
+
+            await channel.DeleteMessages(removeMessages);
         }
 
         #endregion
