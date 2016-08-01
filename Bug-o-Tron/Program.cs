@@ -143,11 +143,13 @@ namespace Bug_o_Tron
                             case "!hello":
                                 if (isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     channel.SendTTSMessage("***HELLO! HELLO! HELLO!***");
                                 }
                                 break;
 
                             case "!help":
+                                LogNormalCommand(channel, commands[0], fullUser);
                                 channel.SendMessage("**· Normal Commands :**\n " +
                                                     "```!hello - HELLO! (admin only)\n" +
                                                     "!help - Shows this message\n" +
@@ -174,6 +176,7 @@ namespace Bug_o_Tron
                             case "!clean":
                                 if (commands.Length > 1 && isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     CleanCommand(channel, int.Parse(commands[1]));
                                 }
                                 break;
@@ -181,6 +184,7 @@ namespace Bug_o_Tron
                             case "!addadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     AddAdminCommand(channel, commands[1]);
                                 }
                                 break;
@@ -188,17 +192,20 @@ namespace Bug_o_Tron
                             case "!removeadmin":
                                 if (commands.Length > 1 && isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveAdminCommand(channel, commands[1]);
                                 }
                                 break;
 
                             case "!adminlist":
+                                LogNormalCommand(channel, commands[0], fullUser);
                                 ShowAdminListCommand(channel);
                                 break;
 
                             case "!bug":
                                 if (commands.Length > 1)
                                 {
+                                    LogNormalCommand(channel, commands[0], fullUser);
                                     AddBugCommand(channel, fullText.Substring(commands[0].Length + 1), fullUser);
                                 }
                                 break;
@@ -206,17 +213,20 @@ namespace Bug_o_Tron
                             case "!removebug":
                                 if (commands.Length > 1 && isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveBugCommand(channel, int.Parse(commands[1]));
                                 }
                                 break;
 
                             case "!buglist":
+                                LogNormalCommand(channel, commands[0], fullUser);
                                 ShowBugListCommand(channel);
                                 break;
 
                             case "!clearbuglist":
                                 if (isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     ClearBugListCommand(channel);
                                 }
                                 break;
@@ -224,6 +234,7 @@ namespace Bug_o_Tron
                             case "!idea":
                                 if (commands.Length > 1)
                                 {
+                                    LogNormalCommand(channel, commands[0], fullUser);
                                     AddIdeaCommand(channel, fullText.Substring(commands[0].Length + 1), fullUser);
                                 }
                                 break;
@@ -231,17 +242,20 @@ namespace Bug_o_Tron
                             case "!removeidea":
                                 if (commands.Length > 1 && isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveIdeaCommand(channel, int.Parse(commands[1]));
                                 }
                                 break;
 
                             case "!idealist":
+                                LogNormalCommand(channel, commands[0], fullUser);
                                 ShowIdeaListCommand(channel);
                                 break;
 
                             case "!clearidealist":
                                 if (isAdmin)
                                 {
+                                    LogAdminCommand(channel, commands[0], fullUser);
                                     ClearIdeaListCommand(channel);
                                 }
                                 break;
@@ -494,6 +508,24 @@ namespace Bug_o_Tron
             Message[] removeMessages = await channel.DownloadMessages(quantity + 1);
 
             await channel.DeleteMessages(removeMessages);
+        }
+
+        #endregion
+
+        #region Log Methods
+
+        public void LogNormalCommand(Channel channel, string cmd, string user)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(cmd + " requested in #" + channel.Name + " by " + user);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public void LogAdminCommand(Channel channel, string cmd, string user)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(cmd + " requested in #" + channel.Name + " by " + user);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         #endregion
