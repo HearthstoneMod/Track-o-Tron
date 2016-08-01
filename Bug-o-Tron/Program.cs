@@ -148,8 +148,6 @@ namespace Bug_o_Tron
                                 break;
 
                             case "!help":
-                                channel.SendMessage("**List of commands available :** \n");
-
                                 channel.SendMessage("**· Normal Commands :**\n " +
                                                     "```!hello - HELLO! (admin only)\n" +
                                                     "!help - Shows this message\n" +
