@@ -278,7 +278,7 @@ namespace Bug_o_Tron
                     adminList += "· " + Admins[i] + "\n";
                 }
 
-                channel.SendMessage(adminList.Remove(adminList.Length - 3) + "```");
+                channel.SendMessage(adminList + "```");
             }
             else
             {
