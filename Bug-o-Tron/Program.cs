@@ -55,7 +55,7 @@ namespace Bug_o_Tron
 
                 Server = Client.Servers.First(s => s.Id == ServerID);
                 
-                Console.WriteLine("Loaded Bug-o-Tron bot to server " + Server.Name);
+                LogText("Loaded Bug-o-Tron bot to server " + Server.Name);
             });
         }
 
@@ -65,64 +65,64 @@ namespace Bug_o_Tron
             {
                 string[] admins = File.ReadAllText(AppDirectory + "admins.list").Split(new string[1] {";"}, StringSplitOptions.RemoveEmptyEntries);
 
-                Console.WriteLine("Loading admins (" + admins.Length + ") :");
+                LogText("Loading admins (" + admins.Length + ") :");
 
                 foreach (string admin in admins)
                 {
                     Admins.Add(admin);
-                    Console.WriteLine("· " + admin);
+                    LogText("- " + admin);
                 }
             }
             else
             {
                 File.Create(AppDirectory + "admins.list").Close();
 
-                Console.WriteLine("Created empty admin list");
+                LogText("Created empty admin list");
             }
 
-            Console.WriteLine(" ");
+            LogText(" ");
 
             if (File.Exists(AppDirectory + "bugs.list"))
             {
                 string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
-                Console.WriteLine("Loading bugs (" + bugs.Length + ") :");
+                LogText("Loading bugs (" + bugs.Length + ") :");
 
                 foreach (string bug in bugs)
                 {
                     Bugs.Add(bug);
-                    Console.WriteLine("· " + bug);
+                    LogText("- " + bug);
                 }
             }
             else
             {
                 File.Create(AppDirectory + "bugs.list").Close();
 
-                Console.WriteLine("Created empty bug list");
+                LogText("Created empty bug list");
             }
 
-            Console.WriteLine(" ");
+            LogText(" ");
 
             if (File.Exists(AppDirectory + "ideas.list"))
             {
                 string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
-                Console.WriteLine("Loading ideas (" + ideas.Length + ") :");
+                LogText("Loading ideas (" + ideas.Length + ") :");
 
                 foreach (string idea in ideas)
                 {
                     Ideas.Add(idea);
-                    Console.WriteLine("· " + idea);
+                    LogText("- " + idea);
                 }
             }
             else
             {
                 File.Create(AppDirectory + "ideas.list").Close();
 
-                Console.WriteLine("Created empty ideas list");
+                LogText("Created empty ideas list");
             }
 
-            Console.WriteLine(" ");
+            LogText(" ");
         }
 
         private void ProcessMessage(MessageEventArgs args)
@@ -514,18 +514,19 @@ namespace Bug_o_Tron
 
         #region Log Methods
 
+        public void LogText(string text)
+        {
+            Console.WriteLine("<white>" + text + "</white>");
+        }
+
         public void LogNormalCommand(Channel channel, string cmd, string user)
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(cmd + " requested in #" + channel.Name + " by " + user);
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("<cyan>" + cmd + " requested in #" + channel.Name + " by " + user + "</cyan>");
         }
 
         public void LogAdminCommand(Channel channel, string cmd, string user)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(cmd + " requested in #" + channel.Name + " by " + user);
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("<green>" + cmd + " requested in #" + channel.Name + " by " + user + "</green>");
         }
 
         #endregion
