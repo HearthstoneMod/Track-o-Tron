@@ -81,8 +81,6 @@ namespace Track_o_Tron
                 LogText("Created empty admin list");
             }
 
-            LogText(" ");
-
             if (File.Exists(AppDirectory + "bugs.list"))
             {
                 string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -100,9 +98,7 @@ namespace Track_o_Tron
 
                 LogText("Created empty bug list");
             }
-
-            LogText(" ");
-
+            
             if (File.Exists(AppDirectory + "todos.list"))
             {
                 string[] todos = File.ReadAllText(AppDirectory + "todos.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -120,9 +116,7 @@ namespace Track_o_Tron
 
                 LogText("Created empty todo list");
             }
-
-            LogText(" ");
-
+            
             if (File.Exists(AppDirectory + "ideas.list"))
             {
                 string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
