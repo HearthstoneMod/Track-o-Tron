@@ -57,7 +57,7 @@ namespace Track_o_Tron
 
                 Server = Client.Servers.First(s => s.Id == ServerID);
                 
-                LogText("Loaded Bug-o-Tron bot to server " + Server.Name);
+                LogText("Loaded Track-o-Tron bot to server " + Server.Name);
             });
         }
 
