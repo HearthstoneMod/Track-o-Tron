@@ -173,7 +173,7 @@ namespace Track_o_Tron
                                 {
                                     channel.SendMessage("Use `!help track` to get the full list of Track-o-Tron commands");
                                 }
-                                else if (commands[1] == "track")
+                                else if (commands[1].ToLower() == "track")
                                 {
                                     LogNormalCommand(channel, commands[0], fullUser);
                                     channel.SendMessage("**· Normal Commands :**\n " +
