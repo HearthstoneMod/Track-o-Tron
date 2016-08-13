@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using Discord;
 
-namespace Bug_o_Tron
+namespace Track_o_Tron
 {
     public class Program
     {
@@ -31,6 +31,7 @@ namespace Bug_o_Tron
 
         private List<string> Admins = new List<string>(); 
         private List<string> Bugs = new List<string>(); 
+        private List<string> Todos = new List<string>(); 
         private List<string> Ideas = new List<string>();
 
         public void Start()
@@ -66,13 +67,12 @@ namespace Bug_o_Tron
             {
                 string[] admins = File.ReadAllText(AppDirectory + "admins.list").Split(new string[1] {";"}, StringSplitOptions.RemoveEmptyEntries);
 
-                LogText("Loading admins (" + admins.Length + ") :");
-
                 foreach (string admin in admins)
                 {
                     Admins.Add(admin);
-                    LogText("- " + admin);
                 }
+
+                LogText("Loaded " + admins.Length + " admins");
             }
             else
             {
@@ -86,14 +86,13 @@ namespace Bug_o_Tron
             if (File.Exists(AppDirectory + "bugs.list"))
             {
                 string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-
-                LogText("Loading bugs (" + bugs.Length + ") :");
-
+                
                 foreach (string bug in bugs)
                 {
                     Bugs.Add(bug);
-                    LogText("- " + bug);
                 }
+
+                LogText("Loaded " + bugs.Length + " bugs");
             }
             else
             {
@@ -104,17 +103,36 @@ namespace Bug_o_Tron
 
             LogText(" ");
 
+            if (File.Exists(AppDirectory + "todos.list"))
+            {
+                string[] todos = File.ReadAllText(AppDirectory + "todos.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                
+                foreach (string todo in todos)
+                {
+                    Todos.Add(todo);
+                }
+
+                LogText("Loaded " + todos.Length + " to-dos");
+            }
+            else
+            {
+                File.Create(AppDirectory + "todos.list").Close();
+
+                LogText("Created empty todo list");
+            }
+
+            LogText(" ");
+
             if (File.Exists(AppDirectory + "ideas.list"))
             {
                 string[] ideas = File.ReadAllText(AppDirectory + "ideas.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-
-                LogText("Loading ideas (" + ideas.Length + ") :");
-
+                
                 foreach (string idea in ideas)
                 {
                     Ideas.Add(idea);
-                    LogText("- " + idea);
                 }
+
+                LogText("Loaded " + ideas.Length + " ideas");
             }
             else
             {
@@ -157,29 +175,42 @@ namespace Bug_o_Tron
                                 break;
 
                             case "!help":
-                                LogNormalCommand(channel, commands[0], fullUser);
-                                channel.SendMessage("**· Normal Commands :**\n " +
-                                                    "```!hello - HELLO! (admin only)\n" +
-                                                    "!ping - Check bot status\n" +
-                                                    "!help - Shows this message\n" +
-                                                    "!clean <quantity> - Cleans x messages from chat (admin only)```\n" +
+                                if (commands.Length == 0)
+                                {
+                                    channel.SendMessage("Use `!help track` to get the full list of Track-o-Tron commands");
+                                }
+                                else if (commands[1] == "track")
+                                {
+                                    LogNormalCommand(channel, commands[0], fullUser);
+                                    channel.SendMessage("**· Normal Commands :**\n " +
+                                                        "```!hello - HELLO! (admin only)\n" +
+                                                        "!ping - Checks bot status and latency\n" +
+                                                        "!help - Shows this message\n" +
+                                                        "!clean <quantity> - Cleans x messages from chat (admin only)```\n" +
 
-                                                    "**· Admin Commands: **\n" +
-                                                    "```!addadmin <fullname> - Adds an admin to the admin list (admin only)\n" +
-                                                    "!removeadmin <fullname> -Removes an admin from the admin list (admin only)\n" +
-                                                    "!adminlist - Show the full list of admins```\n" +
+                                                        "**· Admin Commands: **\n" +
+                                                        "```!addadmin <fullname> - Adds an admin to the admin list (admin only)\n" +
+                                                        "!removeadmin <fullname> - Removes an admin from the admin list (admin only)\n" +
+                                                        "!adminlist - Shows the full list of admins```\n" +
 
-                                                    "**· Bug Commands: **\n" +
-                                                    "```!bug <text> - Adds a bug to the bug list\n" +
-                                                    "!removebug <id> -Remvoes a bug from the bug list (admin only)\n" +
-                                                    "!buglist - Show the full list of bugs\n" +
-                                                    "!clearbuglist - Clear the list of bugs (admin only)```\n" +
+                                                        "**· TO-DO Commands: **\n" +
+                                                        "```!todo <text> - Adds a to-do to the to-do list\n" +
+                                                        "!removetodo <id> - Removes a to-do from the to-do list (admin only)\n" +
+                                                        "!todolist - Shows the full list of to-dos\n" +
+                                                        "!cleartodolist - Clears the list of to-dos (admin only)```\n" +
 
-                                                    "**· Idea Commands: **\n" +
-                                                    "```!idea <text> -Adds an idea to the idea list\n" +
-                                                    "!removeidea <id> -Remvoes an idea from the idea list (admin only)\n" +
-                                                    "!idealist - Show the full list of ideas\n" +
-                                                    "!clearidealist - Clear the list of ideas (admin only)```\n");
+                                                        "**· Bug Commands: **\n" +
+                                                        "```!bug <text> - Adds a bug to the bug list\n" +
+                                                        "!removebug <id> - Removes a bug from the bug list (admin only)\n" +
+                                                        "!buglist - Shows the full list of bugs\n" +
+                                                        "!clearbuglist - Clears the list of bugs (admin only)```\n" +
+
+                                                        "**· Idea Commands: **\n" +
+                                                        "```!idea <text> - Adds an idea to the idea list\n" +
+                                                        "!removeidea <id> - Removes an idea from the idea list (admin only)\n" +
+                                                        "!idealist - Shows the full list of ideas\n" +
+                                                        "!clearidealist - Clears the list of ideas (admin only)```\n");
+                                }
                                 break;
 
                             case "!clean":
@@ -239,7 +270,36 @@ namespace Bug_o_Tron
                                     ClearBugListCommand(channel);
                                 }
                                 break;
-                                
+
+                            case "!todo":
+                                if (commands.Length > 1)
+                                {
+                                    LogNormalCommand(channel, commands[0], fullUser);
+                                    AddTodoCommand(channel, fullText.Substring(commands[0].Length + 1), fullUser);
+                                }
+                                break;
+
+                            case "!removetodo":
+                                if (commands.Length > 1 && isAdmin)
+                                {
+                                    LogAdminCommand(channel, commands[0], fullUser);
+                                    RemoveTodoCommand(channel, int.Parse(commands[1]));
+                                }
+                                break;
+
+                            case "!todolist":
+                                LogNormalCommand(channel, commands[0], fullUser);
+                                ShowTodoListCommand(channel);
+                                break;
+
+                            case "!cleartodolist":
+                                if (isAdmin)
+                                {
+                                    LogAdminCommand(channel, commands[0], fullUser);
+                                    ClearTodoListCommand(channel);
+                                }
+                                break;
+
                             case "!idea":
                                 if (commands.Length > 1)
                                 {
@@ -427,6 +487,81 @@ namespace Bug_o_Tron
             }
 
             File.WriteAllText(AppDirectory + "bugs.list", bugString);
+        }
+
+        #endregion
+
+        #region Todolist Related Methods
+
+        private void ShowTodoListCommand(Channel channel)
+        {
+            if (Todos.Count > 0)
+            {
+                string todoList = "```";
+
+                for (int i = 0; i < Todos.Count; i++)
+                {
+                    todoList += ("(" + i + ") -> " + Todos[i] + " \n");
+                }
+
+                channel.SendMessage("**Showing current to-do list **(" + DateTime.Today.ToShortDateString() + ")** :**\n" + todoList + "```");
+            }
+            else
+            {
+                channel.SendMessage("**To-do list is empty.**");
+            }
+        }
+
+        private void ClearTodoListCommand(Channel channel)
+        {
+            Todos.Clear();
+            SaveTodoFile();
+
+            channel.SendMessage("**To-do list has been cleared.**");
+        }
+
+        private void AddTodoCommand(Channel channel, string todo, string user)
+        {
+            AddTodo(todo, user);
+
+            channel.SendMessage("**To-do added to the list. ** Use *!todolist* to check the current to-do list.");
+        }
+
+        private void RemoveTodoCommand(Channel channel, int id)
+        {
+            if (Todos.Count > id)
+            {
+                channel.SendMessage("**To-do with ID ** " + id + " ** removed from the list.** " + Todos[id]);
+                RemoveTodo(id);
+            }
+            else
+            {
+                channel.SendMessage("**To-do with ID ** " + id + " ** was not found.**");
+            }
+        }
+
+        private void AddTodo(string todo, string user)
+        {
+            Todos.Add(todo + " | " + user + " | " + DateTime.Now);
+            SaveTodoFile();
+        }
+
+        private void RemoveTodo(int id)
+        {
+            Todos.RemoveAt(id);
+            SaveTodoFile();
+        }
+
+        private void SaveTodoFile()
+        {
+            string todoString = string.Join(";", Todos.ToArray());
+
+            if (todoString.StartsWith(";"))
+            {
+                todoString = todoString.Substring(1);
+            }
+
+            File.WriteAllText(AppDirectory + "todos.list", todoString);
         }
 
         #endregion
