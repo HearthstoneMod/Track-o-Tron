@@ -175,7 +175,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!help":
-                                if (commands.Length == 0)
+                                if (commands.Length == 1)
                                 {
                                     channel.SendMessage("Use `!help track` to get the full list of Track-o-Tron commands");
                                 }
