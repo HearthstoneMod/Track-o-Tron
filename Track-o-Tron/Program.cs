@@ -49,7 +49,7 @@ namespace Track_o_Tron
 
             Client.ExecuteAndWait(async () =>
             {
-                await Client.Connect("MjA4MTkyMjA0NTM4MjQ5MjE3.CnuFmQ.JChooQG0LBg9d4ZTrTEE85bdZjM");
+                await Client.Connect("Bot MjA4MTkyMjA0NTM4MjQ5MjE3.CnuFmQ.JChooQG0LBg9d4ZTrTEE85bdZjM");
 
                 await Task.Delay(1000);
 
