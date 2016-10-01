@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +29,11 @@ namespace Track_o_Tron
 
         private string AppDirectory;
 
-        private List<string> Admins = new List<string>(); 
+        private Role DeveloperRole;
+        private Role AdministratorRole;
+        private Role ModeratorRole;
+        private Role VeteranRole;
+
         private List<string> Bugs = new List<string>(); 
         private List<string> Todos = new List<string>(); 
         private List<string> Ideas = new List<string>();
@@ -56,31 +60,18 @@ namespace Track_o_Tron
                 Client.SetGame("Modstone");
 
                 Server = Client.Servers.First(s => s.Id == ServerID);
-                
+
+                DeveloperRole = Server.FindRoles("Developers").FirstOrDefault();
+                AdministratorRole = Server.FindRoles("Administrators").FirstOrDefault();
+                ModeratorRole = Server.FindRoles("Moderators").FirstOrDefault();
+                VeteranRole = Server.FindRoles("Veterans").FirstOrDefault();
+
                 LogText("Loaded Track-o-Tron bot to server " + Server.Name);
             });
         }
 
         private void LoadFiles()
         {
-            if (File.Exists(AppDirectory + "admins.list"))
-            {
-                string[] admins = File.ReadAllText(AppDirectory + "admins.list").Split(new string[1] {";"}, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (string admin in admins)
-                {
-                    Admins.Add(admin);
-                }
-
-                LogText("Loaded " + admins.Length + " admins");
-            }
-            else
-            {
-                File.Create(AppDirectory + "admins.list").Close();
-
-                LogText("Created empty admin list");
-            }
-
             if (File.Exists(AppDirectory + "bugs.list"))
             {
                 string[] bugs = File.ReadAllText(AppDirectory + "bugs.list").Split(new string[1] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -140,6 +131,10 @@ namespace Track_o_Tron
 
         private void ProcessMessage(MessageEventArgs args)
         {
+            Channel channel = args.Channel;
+            User user = args.User;
+            string fullUser = user.ToString();
+
             if (args.Message.IsAuthor == false)
             {
                 if (args.Server?.Id == ServerID)
@@ -149,9 +144,10 @@ namespace Track_o_Tron
                     if (fullText.StartsWith("!"))
                     {
                         string[] commands = fullText.Split();
-                        string fullUser = args.User.ToString();
-                        bool isAdmin = Admins.Contains(fullUser);
-                        Channel channel = args.Channel;
+                        bool isDeveloper = user.HasRole(DeveloperRole);
+                        bool isAdmin = isDeveloper || user.HasRole(AdministratorRole);
+                        bool isModerator = isDeveloper || isAdmin || user.HasRole(ModeratorRole);
+                        bool isVeteran = isDeveloper || isAdmin || isModerator || user.HasRole(VeteranRole);
 
                         switch (commands[0].ToLower())
                         {
@@ -164,8 +160,11 @@ namespace Track_o_Tron
                                 break;
 
                             case "!ping":
-                                LogNormalCommand(channel, commands[0], fullUser);
-                                channel.SendMessage("`Latency : " + new Ping().Send("www.discordapp.com").RoundtripTime + " ms`");
+                                if (isModerator)
+                                {
+                                    LogNormalCommand(channel, commands[0], fullUser);
+                                    channel.SendMessage("`Latency : " + new Ping().Send("www.discordapp.com").RoundtripTime + " ms`");
+                                }
                                 break;
 
                             case "!help":
@@ -177,15 +176,10 @@ namespace Track_o_Tron
                                 {
                                     LogNormalCommand(channel, commands[0], fullUser);
                                     channel.SendMessage("**· Normal Commands :**\n " +
-                                                        "```!hello - HELLO! (admin only)\n" +
-                                                        "!ping - Checks bot status and latency\n" +
+                                                        "```!hello - HELLO! (admin+ only)\n" +
+                                                        "!ping - Checks bot status (mod+ only)\n" +
                                                         "!help - Shows this message\n" +
                                                         "!clean <quantity> - Cleans x messages from chat (admin only)```\n" +
-
-                                                        "**· Admin Commands: **\n" +
-                                                        "```!addadmin <fullname> - Adds an admin to the admin list (admin only)\n" +
-                                                        "!removeadmin <fullname> - Removes an admin from the admin list (admin only)\n" +
-                                                        "!adminlist - Shows the full list of admins```\n" +
 
                                                         "**· TO-DO Commands: **\n" +
                                                         "```!todo <text> - Adds a to-do to the to-do list\n" +
@@ -213,27 +207,6 @@ namespace Track_o_Tron
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     CleanCommand(channel, int.Parse(commands[1]));
                                 }
-                                break;
-
-                            case "!addadmin":
-                                if (commands.Length > 1 && isAdmin)
-                                {
-                                    LogAdminCommand(channel, commands[0], fullUser);
-                                    AddAdminCommand(channel, commands[1]);
-                                }
-                                break;
-
-                            case "!removeadmin":
-                                if (commands.Length > 1 && isAdmin)
-                                {
-                                    LogAdminCommand(channel, commands[0], fullUser);
-                                    RemoveAdminCommand(channel, commands[1]);
-                                }
-                                break;
-
-                            case "!adminlist":
-                                LogNormalCommand(channel, commands[0], fullUser);
-                                ShowAdminListCommand(channel);
                                 break;
 
                             case "!bug":
@@ -327,86 +300,6 @@ namespace Track_o_Tron
                 }
             }
         }
-
-        #region Admin Related Methods
-
-        private void ShowAdminListCommand(Channel channel)
-        {
-            if (Admins.Count > 0)
-            {
-                string adminList = "**Showing current admin list **(" + DateTime.Today.ToShortDateString() + ")** :**\n\n```";
-
-                for (int i = 0; i < Admins.Count; i++)
-                {
-                    adminList += "· " + Admins[i] + "\n";
-                }
-
-                channel.SendMessage(adminList + "```");
-            }
-            else
-            {
-                channel.SendMessage("**Admin list is empty.**");
-            }
-        }
-
-        private void AddAdminCommand(Channel channel, string admin)
-        {
-            if (Server.Users.Any(u => u.ToString() == admin))
-            {
-                if (Admins.Contains(admin))
-                {
-                    channel.SendMessage("@" + admin + "** is already an admin.**");
-                }
-                else
-                {
-                    AddAdmin(admin);
-                    channel.SendMessage("@" + admin + "** was added to the admin list.**");
-                }
-            }
-            else
-            {
-                channel.SendMessage(admin + "** was not found in the server.**");
-            }
-        }
-
-        private void RemoveAdminCommand(Channel channel, string admin)
-        {
-            if (Admins.Contains(admin))
-            {
-                RemoveAdmin(admin);
-                channel.SendMessage(admin + "** was removed from admins.**");
-            }
-            else
-            {
-                channel.SendMessage(admin + "** is not an admin.**");
-            }
-        }
-
-        private void AddAdmin(string admin)
-        {
-            Admins.Add(admin);
-            SaveAdminFile();
-        }
-
-        private void RemoveAdmin(string admin)
-        {
-            Admins.Remove(admin);
-            SaveAdminFile();
-        }
-
-        private void SaveAdminFile()
-        {
-            string adminString = string.Join(";", Admins.ToArray());
-            
-            if (adminString.StartsWith(";"))
-            {
-                adminString = adminString.Substring(1);
-            }
-
-            File.WriteAllText(AppDirectory + "admins.list", adminString);
-        }
-        
-        #endregion
 
         #region Buglist Related Methods
 
