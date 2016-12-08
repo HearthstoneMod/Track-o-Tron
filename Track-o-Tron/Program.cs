@@ -30,7 +30,7 @@ namespace Track_o_Tron
         private string AppDirectory;
 
         private Role DeveloperRole;
-        private Role AdministratorRole;
+        //private Role AdministratorRole;
         private Role ModeratorRole;
         private Role VeteranRole;
 
@@ -62,7 +62,7 @@ namespace Track_o_Tron
                 Server = Client.Servers.First(s => s.Id == ServerID);
 
                 DeveloperRole = Server.FindRoles("Developers").FirstOrDefault();
-                AdministratorRole = Server.FindRoles("Administrators").FirstOrDefault();
+                //AdministratorRole = Server.FindRoles("Administrators").FirstOrDefault();
                 ModeratorRole = Server.FindRoles("Moderators").FirstOrDefault();
                 VeteranRole = Server.FindRoles("Veterans").FirstOrDefault();
 
@@ -145,14 +145,14 @@ namespace Track_o_Tron
                     {
                         string[] commands = fullText.Split();
                         bool isDeveloper = user.HasRole(DeveloperRole);
-                        bool isAdmin = isDeveloper || user.HasRole(AdministratorRole);
-                        bool isModerator = isDeveloper || isAdmin || user.HasRole(ModeratorRole);
-                        bool isVeteran = isDeveloper || isAdmin || isModerator || user.HasRole(VeteranRole);
+                        //bool isAdmin = isDeveloper || user.HasRole(AdministratorRole);
+                        bool isModerator = isDeveloper ||  user.HasRole(ModeratorRole);
+                        bool isVeteran = isDeveloper ||  isModerator || user.HasRole(VeteranRole);
 
                         switch (commands[0].ToLower())
                         {
                             case "!hello":
-                                if (isAdmin)
+                                if (isModerator)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     channel.SendTTSMessage("***HELLO! HELLO! HELLO!***");
@@ -176,33 +176,33 @@ namespace Track_o_Tron
                                 {
                                     LogNormalCommand(channel, commands[0], fullUser);
                                     channel.SendMessage("**· Normal Commands :**\n " +
-                                                        "```!hello - HELLO! (admin+ only)\n" +
+                                                        "```!hello - HELLO! (mod+ only)\n" +
                                                         "!ping - Checks bot status (mod+ only)\n" +
                                                         "!help - Shows this message\n" +
                                                         "!clean <quantity> - Cleans x messages from chat (admin only)```\n" +
 
                                                         "**· TO-DO Commands: **\n" +
                                                         "```!todo <text> - Adds a to-do to the to-do list\n" +
-                                                        "!removetodo <id> - Removes a to-do from the to-do list (admin only)\n" +
+                                                        "!removetodo <id> - Removes a to-do from the to-do list (mod+ only)\n" +
                                                         "!todolist - Shows the full list of to-dos\n" +
-                                                        "!cleartodolist - Clears the list of to-dos (admin only)```\n" +
+                                                        "!cleartodolist - Clears the list of to-dos (dev only)```\n" +
 
                                                         "**· Bug Commands: **\n" +
                                                         "```!bug <text> - Adds a bug to the bug list\n" +
-                                                        "!removebug <id> - Removes a bug from the bug list (admin only)\n" +
+                                                        "!removebug <id> - Removes a bug from the bug list (mod+ only)\n" +
                                                         "!buglist - Shows the full list of bugs\n" +
-                                                        "!clearbuglist - Clears the list of bugs (admin only)```\n" +
+                                                        "!clearbuglist - Clears the list of bugs (dev only)```\n" +
 
                                                         "**· Idea Commands: **\n" +
                                                         "```!idea <text> - Adds an idea to the idea list\n" +
-                                                        "!removeidea <id> - Removes an idea from the idea list (admin only)\n" +
+                                                        "!removeidea <id> - Removes an idea from the idea list (mod+ only)\n" +
                                                         "!idealist - Shows the full list of ideas\n" +
-                                                        "!clearidealist - Clears the list of ideas (admin only)```\n");
+                                                        "!clearidealist - Clears the list of ideas (dev only)```\n");
                                 }
                                 break;
 
                             case "!clean":
-                                if (commands.Length > 1 && isAdmin)
+                                if (commands.Length > 1 && isDeveloper)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     CleanCommand(channel, int.Parse(commands[1]));
@@ -218,7 +218,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!removebug":
-                                if (commands.Length > 1 && isAdmin)
+                                if (commands.Length > 1 && isModerator)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveBugCommand(channel, int.Parse(commands[1]));
@@ -231,7 +231,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!clearbuglist":
-                                if (isAdmin)
+                                if (isDeveloper)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     ClearBugListCommand(channel);
@@ -247,7 +247,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!removetodo":
-                                if (commands.Length > 1 && isAdmin)
+                                if (commands.Length > 1 && isModerator)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveTodoCommand(channel, int.Parse(commands[1]));
@@ -260,7 +260,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!cleartodolist":
-                                if (isAdmin)
+                                if (isDeveloper)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     ClearTodoListCommand(channel);
@@ -276,7 +276,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!removeidea":
-                                if (commands.Length > 1 && isAdmin)
+                                if (commands.Length > 1 && isModerator)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     RemoveIdeaCommand(channel, int.Parse(commands[1]));
@@ -289,7 +289,7 @@ namespace Track_o_Tron
                                 break;
 
                             case "!clearidealist":
-                                if (isAdmin)
+                                if (isDeveloper)
                                 {
                                     LogAdminCommand(channel, commands[0], fullUser);
                                     ClearIdeaListCommand(channel);
